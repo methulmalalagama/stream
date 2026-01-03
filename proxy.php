@@ -3,7 +3,7 @@
 // =============================
 // BASIC SECURITY CONFIG
 // =============================
-$SECRET_KEY = "YOUR_SECRET_KEY_HERE";  // change this to a long random string
+$SECRET_KEY = "Walmee";  // change this to a long random string
 
 $ALLOWED_REFERRERS = [
     "yourdomain.com",
