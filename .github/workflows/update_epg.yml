@@ -2,7 +2,7 @@ name: Update EPG every hour
 
 on:
   schedule:
-    - cron: "0 * * * *"   # runs every hour
+    - cron: "0 * * * *"   # every hour
   workflow_dispatch:
 
 jobs:
@@ -24,6 +24,13 @@ jobs:
 
     - name: Run EPG update script
       run: php update_epg.php
+
+    - name: Check if XML was created
+      run: |
+        if [ ! -f epg_fixed.xml ]; then
+          echo "Error: epg_fixed.xml was not created!"
+          exit 1
+        fi
 
     - name: Deploy EPG to GitHub Pages
       uses: peaceiris/actions-gh-pages@v6
