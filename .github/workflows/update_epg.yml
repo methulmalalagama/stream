@@ -1,0 +1,30 @@
+name: Update EPG every hour
+
+on:
+  schedule:
+    - cron: "0 * * * *"   # run every hour
+  workflow_dispatch:      # allow manual run
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: "8.2"
+
+    - name: Run PHP script
+      run: php update_epg.php
+
+    - name: Commit updated epg_fixed.xml
+      run: |
+        git config --global user.name "github-actions"
+        git config --global user.email "github-actions@github.com"
+        git add epg_fixed.xml
+        git commit -m "Updated EPG" || echo "No changes to commit"
+        git push
