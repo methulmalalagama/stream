@@ -2,43 +2,34 @@ name: Update EPG every hour
 
 on:
   schedule:
-    - cron: "0 * * * *"
+    - cron: "0 * * * *"   # runs every hour
   workflow_dispatch:
 
 jobs:
-  build:
+  update-epg:
     runs-on: ubuntu-latest
     env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true   # <- forces Node.js 24
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
-    - name: Checkout repo
+    - name: Checkout repository
       uses: actions/checkout@v3
       with:
         persist-credentials: true
-        fetch-depth: 0
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
         php-version: "8.2"
 
-    - name: Run PHP script
+    - name: Run EPG update script
       run: php update_epg.php
 
-    - name: Push to GitHub Pages branch
-      run: |
-        git config --global user.name "github-actions"
-        git config --global user.email "github-actions@github.com"
-        if git show-ref --quiet refs/heads/gh-pages; then
-          git checkout gh-pages
-        else
-          git checkout --orphan gh-pages
-        fi
-        git add epg_fixed.xml
-        if git diff --cached --quiet; then
-          echo "No changes to commit"
-        else
-          git commit -m "Updated EPG"
-          git push origin gh-pages
-        fi
+    - name: Deploy EPG to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v6
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_branch: gh-pages
+        publish_dir: .
+        keep_files: false
+        include: epg_fixed.xml
