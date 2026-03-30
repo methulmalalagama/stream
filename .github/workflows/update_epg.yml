@@ -2,8 +2,8 @@ name: Update EPG every hour
 
 on:
   schedule:
-    - cron: "0 * * * *"   # every hour
-  workflow_dispatch:
+    - cron: "0 * * * *"   # runs every hour
+  workflow_dispatch:       # allows manual run
 
 jobs:
   update-epg:
@@ -23,13 +23,16 @@ jobs:
         php-version: "8.2"
 
     - name: Run EPG update script
-      run: php update_epg.php
+      run: |
+        php update_epg.php
 
     - name: Check if XML was created
       run: |
         if [ ! -f epg_fixed.xml ]; then
-          echo "Error: epg_fixed.xml was not created!"
+          echo "❌ epg_fixed.xml not found!"
           exit 1
+        else
+          echo "✅ epg_fixed.xml created successfully."
         fi
 
     - name: Deploy EPG to GitHub Pages
