@@ -2,16 +2,21 @@ name: Update EPG every hour
 
 on:
   schedule:
-    - cron: "0 * * * *"   # run every hour
-  workflow_dispatch:      # allow manual run
+    - cron: "0 * * * *"
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true   # <- forces Node.js 24
 
     steps:
     - name: Checkout repo
       uses: actions/checkout@v3
+      with:
+        persist-credentials: true
+        fetch-depth: 0
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
@@ -21,10 +26,19 @@ jobs:
     - name: Run PHP script
       run: php update_epg.php
 
-    - name: Commit updated epg_fixed.xml
+    - name: Push to GitHub Pages branch
       run: |
         git config --global user.name "github-actions"
         git config --global user.email "github-actions@github.com"
+        if git show-ref --quiet refs/heads/gh-pages; then
+          git checkout gh-pages
+        else
+          git checkout --orphan gh-pages
+        fi
         git add epg_fixed.xml
-        git commit -m "Updated EPG" || echo "No changes to commit"
-        git push
+        if git diff --cached --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "Updated EPG"
+          git push origin gh-pages
+        fi
