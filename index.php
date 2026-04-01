@@ -1,2 +1,3 @@
 <?php
-echo "EPG SERVICE RUNNING";
+header("Content-Type: application/xml");
+readfile("epg_fixed.xml");
