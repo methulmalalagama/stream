@@ -4,7 +4,7 @@
 // 1️⃣ Set paths
 $remote_m3u = "https://tivimate.viulk.xyz/channels.m3u";
 $local_m3u = __DIR__ . "/channels.m3u"; // saved M3U file
-$my_epg_url = "https://epg-production.up.railway.app/epg_fixed.xml";
+$my_epg_url = "https://viulk.up.railway.app/epg_fixed.xml";
 
 // 2️⃣ Fetch remote M3U via cURL
 $ch = curl_init($remote_m3u);
